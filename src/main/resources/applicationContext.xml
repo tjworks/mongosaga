@@ -7,10 +7,15 @@
 
 
     <context:annotation-config/>
-    <context:component-scan base-package="com.mongoing"/>
+    <context:component-scan base-package="com.mongoing.compensation"/>
 
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
         <property name="proxyTargetClass" value="true"/>
     </bean>
+ 	
+    <bean class="com.mongodb.MongoClient" id="mongo">
+        <constructor-arg value="localhost:27017" />
+    </bean>
+ 
 
 </beans>

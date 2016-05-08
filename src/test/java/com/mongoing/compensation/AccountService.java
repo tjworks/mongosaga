@@ -21,9 +21,7 @@ public class AccountService {
     public void transfer(String from, String to, double amount) {
         log.info("Executing method 'AccountService.transfer'.");
          mgr.debit(from, amount);
-         mgr.credit(to, amount);
-        // bean2.bar2();
-        
+         mgr.credit(to, amount);        
     }
  
 
