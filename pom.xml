@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mongoing.compensation</groupId>
-    <artifactId>mongodb-tx-compensation</artifactId>
+    <groupId>com.mongoing.mongosaga</groupId>
+    <artifactId>mongosaga</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>mongodb-tx-compensation</name>
-    <url>http://maven.apache.org</url>
+    <name>mongosaga</name>
+    <url>http://github.com/tjworks/mongosaga</url>
 
 
     <properties>
