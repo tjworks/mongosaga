@@ -1,4 +1,4 @@
-package com.mongoing.compensation;
+package com.mongoing.mongosaga;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -7,14 +7,14 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 import javax.annotation.PostConstruct;
-import com.mongoing.compensation.Compensate;
+import com.mongoing.mongosaga.Compensate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AccountManager {
+public class Account {
 
     private static final Logger log = LoggerFactory.getLogger(AccountManager.class);
     private DB database;

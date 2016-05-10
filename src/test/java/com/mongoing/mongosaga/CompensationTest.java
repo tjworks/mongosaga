@@ -1,4 +1,4 @@
-package com.mongoing.compensation;
+package com.mongoing.mongosaga;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CompensationTest {
 
     @Autowired
-    private AccountService bean;
+    private AccountManager bean;
     @Autowired
     private MongoClient mongo ;
 

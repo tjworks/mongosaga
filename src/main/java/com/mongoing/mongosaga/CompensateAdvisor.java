@@ -1,4 +1,4 @@
-package com.mongoing.compensation;
+package com.mongoing.mongosaga;
 
 import org.aopalliance.aop.Advice;
 import org.springframework.aop.Pointcut;
@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  * @version $Id$
  */
 @Component
-public class CompensatableAdvisor extends AbstractPointcutAdvisor {
+public class CompensateAdvisor extends AbstractPointcutAdvisor {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,12 +22,12 @@ public class CompensatableAdvisor extends AbstractPointcutAdvisor {
             StaticMethodMatcherPointcut() {
                 @Override
                 public boolean matches(Method method, Class<?> targetClass) {
-                    return method.isAnnotationPresent(Compensatable.class);
+                    return method.isAnnotationPresent(Compensate.class);
                 }
             };
 
     @Autowired
-    private CompensatableMethodInterceptor interceptor;
+    private CompensateMethodInterceptor interceptor;
 
     @Override
     public Pointcut getPointcut() {
