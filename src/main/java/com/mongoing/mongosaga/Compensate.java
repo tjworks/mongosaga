@@ -1,4 +1,4 @@
-package com.mongoing.compensation;
+package com.mongoing.mongosaga;
 
 import java.lang.annotation.*;
 
@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Inherited
 @Documented
-public @interface Compensatable {
+public @interface Compensate {
 
 
 }

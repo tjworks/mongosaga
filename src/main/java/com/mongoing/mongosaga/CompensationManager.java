@@ -1,4 +1,4 @@
-package com.mongoing.compensation;
+package com.mongoing.mongosaga;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class CompensationManager{
     public CompensatableTx startTx() {
     	CompensatableTx tx = new CompensatableTx();
         userThreadLocal.set(tx);
-        log.info("TX"+tx.getId()+" started.");
+        log.debug("TX"+tx.getId()+" started.");
         return tx;
     }
 
@@ -77,7 +77,7 @@ class CompensatableTx {
 		return id;
 	}
 	public void add(MethodInvocation invocation){
-		log.info("TX"+getId()+": ---- enlisting {} ----", invocation.getMethod().toGenericString());
+		log.trace("TX"+getId()+": ---- enlisting {} ----", invocation.getMethod().toGenericString());
 		invocations.add(invocation);
 	}
 	public ArrayList<MethodInvocation> getInvocations(){

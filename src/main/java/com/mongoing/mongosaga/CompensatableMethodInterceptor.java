@@ -1,4 +1,4 @@
-package com.mongoing.compensation;
+package com.mongoing.mongosaga;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -27,8 +27,8 @@ public class CompensatableMethodInterceptor implements MethodInterceptor {
 
         Object ret = null;
         try {
-            log.info("count "+ (++count));
-            log.info("#### START COMPENSATABLE TX {} ####", invocation.getMethod().toGenericString());
+            
+            log.debug("#### START COMPENSATABLE TX {} ####", invocation.getMethod().toGenericString());
             ret = invocation.proceed();
             //manager.resetTx();
         } 
@@ -38,7 +38,7 @@ public class CompensatableMethodInterceptor implements MethodInterceptor {
         }
         finally {           
             //manager.endTx();
-            log.info("#### END COMPENSATABLE TX {} #####", invocation.getMethod().toGenericString());
+            log.debug("#### END COMPENSATABLE TX {} #####", invocation.getMethod().toGenericString());
         }
         return ret;
     }
