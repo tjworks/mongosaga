@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
- * @author Maxim Kalina
+ * @author TJ Tang
  * @version $Id$
  */
 @Component

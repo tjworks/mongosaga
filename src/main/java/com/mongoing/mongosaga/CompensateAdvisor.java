@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 /**
- * @author Maxim Kalina
+ * @author TJ Tang
  * @version $Id$
  */
 @Component

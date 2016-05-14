@@ -3,7 +3,7 @@ package com.mongoing.mongosaga;
 import java.lang.annotation.*;
 
 /**
- * @author Maxim Kalina
+ * @author TJ Tang
  * @version $Id$
  */
 @Retention(RetentionPolicy.RUNTIME)
