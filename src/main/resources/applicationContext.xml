@@ -15,6 +15,5 @@
     <bean class="com.mongodb.MongoClient" id="mongo">
         <constructor-arg value="localhost:27017" />
     </bean>
- 
 
 </beans>

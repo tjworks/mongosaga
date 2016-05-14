@@ -19,7 +19,7 @@ public class AccountManager {
 
     @Compensatable
     public void transfer(String from, String to, double amount) {
-        log.info("Executing method 'AccountService.transfer'.");
+        //log.info("Executing method 'AccountService.transfer'.");
          account.debit(from, amount);
          account.credit(to, amount);        
     }

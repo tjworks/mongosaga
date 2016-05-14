@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class LoadTest {
 
     @Autowired
-    private AccountManager bean;
+    private AccountManager accountManager;
     @Autowired
     private MongoClient mongo ;
 
@@ -35,13 +35,18 @@ public class LoadTest {
     @Before
     public void resetAccountData() throws Exception {
         //MongoClient mongo = new MongoClient("localhost", 27017);
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn");
         DB database = mongo.getDB("test");
 
         database.getCollection("accounts").drop();
         accounts = database.getCollection("accounts");
+        for(int i=0;i<100;i++){
 
-        accounts.insert(new BasicDBObject("name", "tj").append("balance", 10000.0));
-        accounts.insert(new BasicDBObject("name", "mona").append("balance",10000.0));
+            accounts.insert(new BasicDBObject("name", "tj"+i).append("balance", 0.0));
+            accounts.insert(new BasicDBObject("name", "mona"+i).append("balance",0.0));    
+        }   
+        accounts.insert(new BasicDBObject("name", "tj").append("balance", 0.0));
+        accounts.insert(new BasicDBObject("name", "mona").append("balance",0.0));         
     }
 
     /**
@@ -51,37 +56,40 @@ public class LoadTest {
      */
     @Test
     public void testSuccess() throws Exception {
-        //Logger.getRootLogger().removeAllAppenders();
-        final int[] counter = new int[]{0};
         
-        ExecutorService executor = Executors.newFixedThreadPool(64);
-        Date start = new Date();
-        for (int i = 0; i < 64; i++) {
-            Runnable worker = new Runnable(){
-                public void run(){
-                    int amount = (int)(Math.random()*510);
-                    for(int k=0;k<1000;k++){
-                        try{
-                            if(amount % 2 ==0 )
-                                bean.transfer("mona", "tj", amount);
-                            else
-                                bean.transfer("tj", "mona", amount);    
-                        }
-                        catch(Exception e){
-                            counter[0]++;
-                        }    
-                    }                    
-                    System.out.println("Transfering "+ amount);
-                }
-            };
-            executor.execute(worker);
+        if(true) return;
+        
+        final int[] counter = new int[]{0, 0};
+        
+        final class Worker implements Runnable {
+            int id;
+            public Worker(int id){ this.id=id; }
+            public void run(){
+                int amount = (int)(Math.random()*100)+1;
+                for(int k=0;k<1000;k++){
+                    try{
+                        counter[0]++;
+                        accountManager.transfer("mona"+ id, "tj"+ id, amount);                            
+                    }
+                    catch(Exception e){ counter[1]++; }    
+                }                                 
+            }
+        }        
+        int poolSize = 100;
+        ExecutorService executor = Executors.newFixedThreadPool(poolSize);        
+        for (int i = 0; i < poolSize; i++) {             
+            executor.execute(new Worker(i));
         } 
+        Thread.sleep(3);
+        Date start = new Date();
         shutdownAndAwaitTermination(executor);
-        System.out.println("#### Time used: " +(start.getTime() - new Date().getTime())/1000);
-        System.out.println("#### Total compensations: "+ counter[0]);
+        System.out.println("#### Time used: " +( new Date().getTime()-start.getTime() )/1000);
+        System.out.println("#### Total compensations: "+ counter[1] +" out of total op: "+ counter[0]);
         assertBalance();
         
+
     }   
+    
     
     private void shutdownAndAwaitTermination(ExecutorService pool) {
        pool.shutdown(); // Disable new tasks from being submitted
@@ -95,6 +103,7 @@ public class LoadTest {
          }
        } catch (InterruptedException ie) {
          // (Re-)Cancel if current thread also interrupted
+        System.err.println("Interrupted");
          pool.shutdownNow();
          // Preserve interrupt status
          Thread.currentThread().interrupt();
@@ -107,12 +116,14 @@ public class LoadTest {
      * @param expectedBalance The expected balance
      */
     private void assertBalance() {
-        DBObject accountDoc1 = accounts.findOne(new BasicDBObject("name", "mona"));
-        DBObject accountDoc2 = accounts.findOne(new BasicDBObject("name", "tj"));
-        Double actualBalance1 = (Double) accountDoc1.get("balance");
-        Double actualBalance2 = (Double) accountDoc2.get("balance");
 
-        Assert.assertEquals("Total Balance is not as expected. Got '" + (actualBalance1.intValue()+actualBalance2.intValue() )
-            + "', expected:  20000", 20000, (actualBalance1.intValue()+actualBalance2.intValue() ), 0);
+        
+        DBObject sum = new BasicDBObject("_id", "").append("sum", new BasicDBObject("$sum", "$balance"));        
+        DBObject group = new BasicDBObject("$group", sum);
+
+        BasicDBObject output = (BasicDBObject)(accounts.aggregate(group).results().iterator().next());
+
+        Assert.assertEquals("Total Balance is not as expected. Got '" + output.get("sum")
+            + "', expected:  0", 0, output.getInt("sum"), 0);
     }
 }

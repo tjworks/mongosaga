@@ -47,9 +47,9 @@ public class CompensationTest {
     public void testSuccess() throws Exception {
 
         //for(int i=0;i<3;i++)
-        bean.transfer("mona", "tj", 100.0);
-        assertBalance("mona", 900.0);
-        assertBalance("tj", 1100.0);
+        bean.transfer("mona", "tj", 50.0);
+        assertBalance("mona", 950.0);
+        assertBalance("tj", 1050.0);
     }
 
     /**

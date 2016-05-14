@@ -24,12 +24,12 @@ public class CompensateMethodInterceptor implements MethodInterceptor {
     public Object invoke(MethodInvocation invocation) throws Throwable {
          
         try {
-            //log.info("---- Compensating Func {} ----", invocation.getMethod().toGenericString());
+            log.info("---- Compensating Func {} ----", invocation.getMethod().toGenericString());
             Object ret = invocation.proceed();
             manager.enlist(invocation); // this step has been performed, subject to compensate
             return ret;
         } finally {           
-            //log.info("---- END METHOD Compensating {} ----", invocation.getMethod().toGenericString());
+            log.info("---- END METHOD Compensating {} ----", invocation.getMethod().toGenericString());
         }
 
     }

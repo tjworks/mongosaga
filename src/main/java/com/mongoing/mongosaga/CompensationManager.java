@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
@@ -16,9 +17,10 @@ import org.aopalliance.intercept.MethodInvocation;
 public class CompensationManager{
 	private static final Logger log = LoggerFactory.getLogger(CompensationManager.class);
 	static final ThreadLocal userThreadLocal = new ThreadLocal();
-
+    static final AtomicLong idGenerator = new AtomicLong(10000);
     public CompensatableTx startTx() {
-    	CompensatableTx tx = new CompensatableTx();
+        long uid = idGenerator.getAndIncrement();
+    	CompensatableTx tx = new CompensatableTx(uid);
         userThreadLocal.set(tx);
         log.debug("TX"+tx.getId()+" started.");
         return tx;
@@ -30,15 +32,22 @@ public class CompensationManager{
     public void enlist(MethodInvocation invocation){
     	getTx().add(invocation);
     }
+    public long getTransactionId(){
+        return getTx().getId();
+    }
+    public boolean isCompensating(){
+        return getTx().isCompensating();
+    }
     public CompensatableTx getTx() {
         return (CompensatableTx)userThreadLocal.get();
     }
-    public void rollback(){
+    void doCompensation(){
     	CompensatableTx tx = getTx();
     	List<MethodInvocation> invocations = tx.getInvocations();
+        tx.setCompensating(true);
     	for(int i=invocations.size()-1;i>=0;i--){
     		MethodInvocation invocation = invocations.get(i);
-    		log.info("Compensating {}", invocation.getMethod().toGenericString());
+    		log.debug("Compensating {}", invocation.getMethod().toGenericString());
     		Method compensator = null;
     		Object target = invocation.getThis();
     		Method[] methods = target.getClass().getMethods();
@@ -71,16 +80,28 @@ public class CompensationManager{
 
 class CompensatableTx {
 	private static final Logger log = LoggerFactory.getLogger(CompensatableTx.class);
-	private long id = (long) (Math.random()*10000000); //@todo: unique
+    
+	private long id;
+    private boolean compensating;
 	private ArrayList<MethodInvocation> invocations = new ArrayList<MethodInvocation>(5);
+    public CompensatableTx(long uid){
+        this.id = uid;
+    }
 	public long getId(){
 		return id;
 	}
 	public void add(MethodInvocation invocation){
+        /**@todo: check log level first */
 		log.trace("TX"+getId()+": ---- enlisting {} ----", invocation.getMethod().toGenericString());
 		invocations.add(invocation);
 	}
 	public ArrayList<MethodInvocation> getInvocations(){
 		return invocations;
 	}
+    void setCompensating(boolean status){
+        this.compensating = status;
+    }
+    boolean isCompensating(){
+        return true;
+    }
 }

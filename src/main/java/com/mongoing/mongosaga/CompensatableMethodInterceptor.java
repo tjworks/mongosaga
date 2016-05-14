@@ -33,7 +33,7 @@ public class CompensatableMethodInterceptor implements MethodInterceptor {
             //manager.resetTx();
         } 
         catch(Throwable t){            
-            manager.rollback();
+            manager.doCompensation();
             throw t;
         }
         finally {           
