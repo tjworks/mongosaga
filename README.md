@@ -22,7 +22,9 @@ In your Spring applicationContext file, add following lines(if not already exist
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
         <property name="proxyTargetClass" value="true"/>
     </bean>
- 	  
+
+You can also refer to this PDF for informaiton of how to use: http://www.mongoing.com/wp-content/uploads/2016/05/DTCC2016%20Compensatable%20Transaction%20With%20MongoDB.pdf
+
 ## About logging
 
 To turn on debugging, either using the system property or a property file
